@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -16,5 +17,8 @@ class ItemCreate(ItemBase):
 # 3.3 Response
 class ItemResponse(ItemBase):
     id: int
+    create_at: datetime
+    update_at: datetime
+    delete_at: Optional[datetime] = None
     class Config:
         from_attributes = True

@@ -1,7 +1,10 @@
-from sqlalchemy import DateTime
 from datetime import datetime
-from zoneinfo import ZoneInfo
+import pytz
 
-def get_thai_time(format: str = "%d-%m-%Y %H:%M:%S") -> DateTime:
-    time = datetime.now(ZoneInfo('Asia/Bangkok'))
-    return time.strftime(format)
+def get_thai_time():
+    thai_timezone = pytz.timezone('Asia/Bangkok')
+    utc_now = datetime.now(pytz.utc)
+    thailand_time = utc_now.astimezone(thai_timezone)
+    return thailand_time
+
+# print(get_thai_time())
