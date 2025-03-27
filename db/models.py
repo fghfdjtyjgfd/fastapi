@@ -29,3 +29,26 @@ class Item(Base):
 
     def soft_delete(self):
         self.delete_at = get_thai_time()
+
+class Users(Base):
+    __tablename__ = "users"
+
+    create_at = Column(
+        DateTime(timezone=True),
+        default=get_thai_time(),
+        nullable=False
+    )
+    update_at = Column(
+        DateTime(timezone=True),
+        default=get_thai_time(),
+        onupdate=get_thai_time(),
+        nullable=True
+    )
+    delete_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    username = Column(String(length=30), nullable=False, unique=True)
+    password = Column(String(length=30), nullable=False)
+    email = Column(String(length=30), nullable=False, unique=True)
