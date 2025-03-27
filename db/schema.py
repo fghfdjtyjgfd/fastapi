@@ -16,8 +16,5 @@ class ItemCreate(ItemBase):
 # 3.3 Response
 class ItemResponse(ItemBase):
     id: int
-    create_at: datetime
-    update_at: datetime
-    delete_at: datetime
     class Config:
         from_attributes = True
