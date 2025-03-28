@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .db.database import Base, engine
-from .api.v1.endpoint import items
+from .api.v1.endpoint import items, users
 
 # create database
 Base.metadata.create_all(bind=engine)
@@ -17,4 +17,4 @@ app.add_middleware(
 )
 
 app.include_router(items.routes, prefix="/api/v1/items")
-
+app.include_router(users.routes, prefix="/api/v1/users")

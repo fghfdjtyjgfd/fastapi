@@ -1,5 +1,5 @@
-from typing import Optional
-from pydantic import BaseModel
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, constr, conint
 from datetime import datetime
 
 # Step 3: Pydantic model ================================
@@ -7,8 +7,8 @@ from datetime import datetime
 # 3.1 - Base
 class ItemBase(BaseModel):
     title: str
-    price: float
-    description: str
+    price: conint(gt=0)
+    description: Optional[str]
 
 # 3.2 Request
 class ItemCreate(ItemBase):
@@ -20,24 +20,34 @@ class ItemResponse(ItemBase):
     create_at: datetime
     update_at: datetime
     delete_at: Optional[datetime] = None
+    owner_id: int
     class Config:
         from_attributes = True
 
 # =================== User schema =======================
+# ======== User create =========
+class Usercreate(BaseModel):
+    username: constr(min_length=3, max_length=15)
+    password: constr(min_length=4)
+    email: EmailStr
 
-class UserBase(BaseModel):
-    username: str
-    password: str
-    email: str
-
-class UserCreate(UserBase):
-    pass
-
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
+    username: str
+    email: str
     create_at: datetime
     update_at: datetime
-    delete_at: datetime
+    items: List[ItemResponse] = []
 
     class Config:
         from_attributes = True
+
+# ======== User Login =========
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str

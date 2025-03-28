@@ -1,9 +1,12 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 import sqlalchemy.dialects.postgresql as pg
 from .database import Base
 from ..service.utils import get_thai_time
+import bcrypt
 
 # Step 2: create ORM class ===============================
+# ================= Item ORM class =======================
 class Item(Base):
     __tablename__ = "items"
 
@@ -27,9 +30,14 @@ class Item(Base):
     description = Column(String(length=255), index=True)
     price = Column(Integer, index=True)
 
+    owner_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    owner = relationship("Users", back_populates="items")
+
+    @classmethod
     def soft_delete(self):
         self.delete_at = get_thai_time()
 
+# ================= Users ORM class =======================
 class Users(Base):
     __tablename__ = "users"
 
@@ -44,11 +52,19 @@ class Users(Base):
         onupdate=get_thai_time(),
         nullable=True
     )
-    delete_at = Column(
-        DateTime(timezone=True),
-        nullable=True
-    )
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     username = Column(String(length=30), nullable=False, unique=True)
-    password = Column(String(length=30), nullable=False)
+    hashed_password = Column(String(length=255), nullable=False)
     email = Column(String(length=30), nullable=False, unique=True)
+
+    items = relationship("Item", back_populates="owner", cascade="all, delete-orphan")
+
+    @classmethod
+    def hash_password(cls, password: str) -> str:
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    def verify_password(self, password: str) -> bool:
+        return bcrypt.checkpw(
+            password.encode('utf-8'),
+            self.hashed_password.encode('utf-8')
+        )
