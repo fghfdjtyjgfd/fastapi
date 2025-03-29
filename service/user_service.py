@@ -12,7 +12,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
-ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
 def create_user(db: Session, user: Usercreate):
     existing_user = db.query(Users).filter(
@@ -46,7 +46,7 @@ def create_user(db: Session, user: Usercreate):
 
 def authenticate_user(db: Session, login_data:UserLogin):
     user = db.query(Users).filter(Users.username == login_data.username).first()
-    if not user or not Users.verify_password(login_data.password):
+    if not user or not user.verify_password(password=login_data.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Username or password is incorrect"

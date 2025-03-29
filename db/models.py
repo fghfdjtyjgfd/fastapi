@@ -33,7 +33,6 @@ class Item(Base):
     owner_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     owner = relationship("Users", back_populates="items")
 
-    @classmethod
     def soft_delete(self):
         self.delete_at = get_thai_time()
 
@@ -62,7 +61,7 @@ class Users(Base):
     @classmethod
     def hash_password(cls, password: str) -> str:
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    
+   
     def verify_password(self, password: str) -> bool:
         return bcrypt.checkpw(
             password.encode('utf-8'),
