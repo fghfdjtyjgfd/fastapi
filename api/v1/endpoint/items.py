@@ -9,7 +9,7 @@ from ....service.user_service import get_current_user
 
 # Step 4: HTTP method CRUD ========================================
 
-routes = APIRouter()
+routes = APIRouter(prefix="/items")
 
 @routes.get("/", response_model=List[ItemResponse])
 def get_items(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):

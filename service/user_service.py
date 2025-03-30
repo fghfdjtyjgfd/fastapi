@@ -71,7 +71,7 @@ def create_access_token(data: dict, expire_delta: Optional[timedelta] = None):
 
 def get_current_user(db: Session, token: str):
     if is_token_blacklisted(token, db):
-        HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="This token is invalidated, please login again"
         )
