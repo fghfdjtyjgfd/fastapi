@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 import jwt
-from ..db.models import Users
+from ..db.models import Users, TokenBlacklist
 from ..db.schema import Usercreate, UserLogin
 from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
@@ -13,6 +13,12 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
+
+def is_token_blacklisted(token: str, db: Session):
+    blacklisted = db.query(TokenBlacklist).filter(
+        TokenBlacklist.token == token
+    ).first()
+    return blacklisted is not None
 
 def create_user(db: Session, user: Usercreate):
     existing_user = db.query(Users).filter(
@@ -64,6 +70,11 @@ def create_access_token(data: dict, expire_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 def get_current_user(db: Session, token: str):
+    if is_token_blacklisted(token, db):
+        HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This token is invalidated, please login again"
+        )
     try:
         payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
         username: str = payload.get("sub")

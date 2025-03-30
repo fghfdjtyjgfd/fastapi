@@ -67,3 +67,13 @@ class Users(Base):
             password.encode('utf-8'),
             self.hashed_password.encode('utf-8')
         )
+    
+# ================= Blacklist token ORM class =======================
+
+class TokenBlacklist(Base):
+    __tablename__ = "token_blacklist"
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    token = Column(String(length=500), nullable=False, unique=True, index=True)
+    blacklisted_at = Column(DateTime(timezone=True), default=get_thai_time(), nullable=False)
+    expire_at = Column(DateTime(timezone=True), nullable=False)
