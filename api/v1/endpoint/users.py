@@ -2,15 +2,15 @@ import jwt
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from ....db.schema import UserResponse, Usercreate, UserLogin, TokenResponse
+from ....schemas.token import TokenResponse
+from ....schemas.users import UserResponse, Usercreate, UserLogin
 from ....db.database import get_db
-from ....db.models import TokenBlacklist
+from ....models.token import TokenBlacklist
 from sqlalchemy.orm import Session
 from ....service.utils import get_thai_time
 from ....service.user_service import (
     create_user,
     create_access_token,
-    get_current_user,
     authenticate_user,
     SECRET_KEY,
     ALGORITHM

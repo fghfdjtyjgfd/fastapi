@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlalchemy.orm import Session
 from ....db.database import get_db
-from ....db.schema import ItemCreate, ItemResponse
-from ....db.models import Item
+from ....schemas.items import ItemCreate, ItemResponse
+from ....models.items import Item
 from .users import oauth2_scheme
 from ....service.user_service import get_current_user
 

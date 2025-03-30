@@ -1,8 +1,9 @@
 from dotenv import load_dotenv
 import os
 import jwt
-from ..db.models import Users, TokenBlacklist
-from ..db.schema import Usercreate, UserLogin
+from ..models.token import TokenBlacklist
+from ..models.users import Users
+from ..schemas.users import Usercreate, UserLogin
 from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
